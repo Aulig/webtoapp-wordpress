@@ -2,7 +2,7 @@
 
 
 /*
- * Helper class to open the media gallery, an enumerate all pages.
+ * Helper class to open the media gallery, and enumerate all pages.
  */
 
 class webtoappMedia

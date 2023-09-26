@@ -3,7 +3,7 @@
 require_once( dirname( __FILE__ ) . '/media.php' );
 
 /*
- * Handles webtoapp options page only.
+ * Handles only the webtoapp options page.
  */
 
 class WebToAppOptions
