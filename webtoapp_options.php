@@ -85,19 +85,6 @@ class WebToAppOptions
     {
         return wp_parse_args( get_option( $this->options_name, $this->default_options ), $this->default_options );
     }
-    
-    function inputAndButton($buttonText, $inputName, $placeholder, $buttonJs)
-    {
-return <<<END
-<div class="input-group">
-    <input name="{$inputName}" class="form-control" style="font-size: 1.15rem;" placeholder="{$placeholder}" id="url-go_app_details_from_home_top" type="text">
-    <label for="url-go_app_details_from_home_top" class="sr-only">website.com</label>
-    <div class="input-group-append">
-        <a href="/" class="btn btn-primary url-submit-button" style="font-size: 1.15rem; font-weight: 500" onclick="{$buttonJs}">{$buttonText}</a>
-    </div>
-</div>
-END;
-    }
    
     function header($responseText, $responseOK)
     {
@@ -108,7 +95,7 @@ END;
         $logo = plugins_url('back/logo.svg', __FILE__);
         
 return <<<END
-<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm hide-in-iframe" id="navigation-bar">
+<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm" id="navigation-bar">
 <a class="navbar-brand" href="https://webtoapp.design/?utm_source=wordpress&utm_medium=plugin&utm_campaign=header">
 <img decoding="async" src="{$logo}" style="height:2rem; width: auto" height="144" width="144" class="d-inline-block align-top" alt="Website to App Converter webtoapp.design Logo">
 webtoapp.design
@@ -303,9 +290,15 @@ END;
             <form id="webtoapp-set-key" method="post" enctype="multipart/form-data" action="" class="webtoapp-dashboard" >  
             	
     			<h1>Enter your API key:</h1>
-    			
-    			<?php echo $this->inputAndButton("Save", "webtoapp-key", "...", "document.getElementById('webtoapp-set-key').submit(); return false;") ?>
-    			
+
+    			<div class="input-group">
+                    <input name="webtoapp-key" class="form-control" placeholder="abcdef123456" id="webtoapp-key" type="text" minlength="43" maxlength="43">
+                    <label for="webtoapp-key" class="sr-only">Your API key</label>
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit" >Save</button>
+                    </div>
+                </div>
+
     			<br/><a href="https://webtoapp.design/?utm_source=wordpress&utm_medium=plugin&utm_campaign=login" target="_blank" >I have not created an app yet</a>
     			&nbsp;|&nbsp;
     			
@@ -324,7 +317,7 @@ END;
     			<br/>
     			
     			<p>
-    			<input class="btn btn-primary url-submit-button" type="submit" value="Delete API Key" name="webtoapp-key-delete" />
+    			<input class="btn btn-danger url-submit-button" type="submit" value="Delete API Key" name="webtoapp-key-delete" />
     			<?php echo "&nbsp;(" . $options["key"] .")"  ?>
     			</p>
            </form>
