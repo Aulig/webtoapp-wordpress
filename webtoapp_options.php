@@ -292,7 +292,7 @@ END;
     			<h1>Enter your API key:</h1>
 
     			<div class="input-group">
-                    <input name="webtoapp-key" class="form-control" placeholder="abcdef123456" id="webtoapp-key" type="text" minlength="43" maxlength="43">
+                    <input name="webtoapp-key" class="form-control" placeholder="12345-abcdefghijklmnopqrstuvwxyz-0123456789" id="webtoapp-key" type="text" minlength="43" maxlength="43">
                     <label for="webtoapp-key" class="sr-only">Your API key</label>
                     <div class="input-group-append">
                         <button class="btn btn-primary" type="submit" >Save</button>
