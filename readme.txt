@@ -1,9 +1,9 @@
 === webtoapp.design - Convert Your WordPress Website to an App and Send Push Notifications ===
 Contributors: webtoappdesign
 Tags: Android App,iOS App,Application,App,Mobile App,Native App,Push Notifications,Notification,Website to App,WordPress to App,App Builder,Create App
-Requires at least: 4.0
+Requires at least: 5.8
 Tested up to: 6.3
-Requires PHP: 5.6
+Requires PHP: 7.2
 Stable tag: 1.0.0
 License: GPLv2
 Plugin URI: https://webtoapp.design/?utm_source=wordpress&utm_medium=plugin&utm_campaign=homepage
@@ -37,6 +37,12 @@ Features and benefits of turning your website into an app with webtoapp.design:
 - **Free Updates:** We keep developing all apps to improve performance, fix bugs and comply with the latest app store guidelines. If you ever need to update your app, you can do so for free, it's included in your subscription.
 - **Great Compatibility:** The apps created by webtoapp.design work on 99% of all devices due to our commitment to also support old phones and tablets.
 
+
+This plugin internally uses the webtoapp.design API and does not collect any other data.
+[webtoapp.design Privacy Policy](https://webtoapp.design/blog/privacy?utm_source=wordpress&utm_medium=plugin&utm_campaign=description)
+[webtoapp.design Terms of Service](https://webtoapp.design/blog/terms?utm_source=wordpress&utm_medium=plugin&utm_campaign=description)
+
+[Plugin Source Code](https://github.com/Aulig/webtoapp-wordpress/tree/master)
 
 == Changelog ==
 
