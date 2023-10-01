@@ -123,7 +123,7 @@ END;
         $out = <<<END
 <div class="card mt-3">
   <div class="card-header">
-    <h3 class="title">New page publish notification</h3>
+    <h3 class="title">New Page Publish Notification</h3>
   </div>
   <div class="card-body">
     <form action="" method="post" enctype="multipart/form-data">

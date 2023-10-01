@@ -6,12 +6,12 @@
  Author: webtoapp.design
  Text Domain: webtoapp
  License: Copyright 2023 webtoapp.design
- Version: 0.0.30
+ Version: 1.0.0
 */
 
 require_once( dirname( __FILE__ ) . '/webtoapp_options.php' );
 class WebToApp {
-    public $version = "0.0.30";
+    public $version = "1.0.0";
 
     private $options;
 
