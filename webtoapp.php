@@ -6,12 +6,8 @@
  Author: webtoapp.design
  Text Domain: webtoapp
  License: Copyright 2023 webtoapp.design
- Version: 1.0.0
-*/
-
-require_once( dirname( __FILE__ ) . '/webtoapp_options.php' );
-class WebToApp {
-    public $version = "1.0.0";
+ Version:              1.0.1     */ if ( ! defined( 'ABSPATH' ) ) exit;  require_once( dirname( __FILE__ ) . '/webtoapp_options.php' );  class WebToApp {
+    public $version = "1.0.1";
 
     private $options;
 
@@ -59,7 +55,7 @@ class WebToApp {
             
             if( isset($options["key"]) && isset($options["autopublish"]) && $options["autopublish"] == true )
             {
-                $key = $options["key"];
+                $key = sanitize_text_field($options["key"]);
                 
                 $title = get_the_title($this->postPublishId);
                 
@@ -132,7 +128,7 @@ class WebToApp {
             ),
         );
         
-        $response = wp_remote_post($url, $args);
+        $response = wp_remote_post( sanitize_url($url), $args);
         
         if (is_wp_error($response))
         {

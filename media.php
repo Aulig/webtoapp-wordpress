@@ -1,5 +1,6 @@
 <?php 
 
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /*
  * Helper class to open the media gallery, and enumerate all pages.
@@ -19,64 +20,61 @@ class webtoappMedia
     
     function getNecessaryJs($selectorInput, $selectorButton)
     {
-        return <<<END
+        $selectorButton = esc_js($selectorButton);
+        $selectorInput  = esc_js($selectorInput);
+        
+        $out = "";
+        $out .= "<script>";
+        $out .= "jQuery(document).ready(function($){";
+        $out .= "$('{$selectorButton}').click(function(e) {";
+        $out .= "e.preventDefault();";
+        $out .= "var custom_media_frame = wp.media.frames.custom_media_frame = wp.media({";
+        $out .= "title: 'Choose or Upload Media',";
+        $out .= "button: {";
+        $out .= "text: 'Use this media'";
+        $out .= "},";
+        $out .= "});";
+        $out .= "custom_media_frame.on('select', function() {";
+        $out .= "var attachment = custom_media_frame.state().get('selection').first().toJSON();";
+        $out .= "$('{$selectorInput}').val(attachment.url);";
+        $out .= "});";
+        $out .= "custom_media_frame.open();";
+        $out .= "});";
+        $out .= "});";
+        $out .= "</script>";
 
-<script>
-jQuery(document).ready(function($){
-    $('{$selectorButton}').click(function(e) {
-        e.preventDefault();
-        var custom_media_frame = wp.media.frames.custom_media_frame = wp.media({
-            title: 'Choose or Upload Media',
-            button: {
-                text: 'Use this media'
-            },
-        });
-        custom_media_frame.on('select', function() {
-            var attachment = custom_media_frame.state().get('selection').first().toJSON();
-            $('{$selectorInput}').val(attachment.url);
-        });
-        custom_media_frame.open();
-    });
-});
-</script>
-
-END;
+        return $out;
     }
     
     public static function dropdownPages($idDropdown, $defaultText, $idCopyToInput = null)
     {        
-        $out = <<<END
-<select id="{$idDropdown}" class="btn dropdown-toggle" style="width:1em">
-    
-END;
+        $idDropdownAtt = esc_attr($idDropdown);
+        $idDropdownStr = esc_js($idDropdown);
+        $idCopyToInput = $idCopyToInput != null? esc_js($idCopyToInput) : null;
+        
+        $out = "<select id='{$idDropdownAtt}' class='btn dropdown-toggle' style='width:1em'>";
 
         foreach ( get_pages( array('post_status' => 'publish') ) as $page )
         {
             $val = esc_attr( get_permalink($page) );
             $title = esc_html($page->post_title);
             
-            $out .= <<<END
-<option value="{$val}">{$title}</option>
-END;
+            $out .= "<option value='{$val}'>{$title}</option>";
         }
     
         if( $idCopyToInput != null )
         {
-            $out .= <<<END
-<script>
-jQuery(document).ready(function($){
-    $('#{$idDropdown}').change(function(e)
-    {
-        $('#{$idCopyToInput}').val( this.value );
-    });
-});
-</script>
-END;
+            $out .= "<script>";
+            $out .= "jQuery(document).ready(function($){";
+            $out .= "$('#{$idDropdownStr}').change(function(e)";
+            $out .= "{";
+            $out .= "$('#{$idCopyToInput}').val( this.value );";
+            $out .= "});";
+            $out .= "});";
+            $out .= "</script>";
         }
         
-$out .= <<<END
-</select>
-END;
+        $out .= "</select>";
         
         return $out;
               
