@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Helper class to open the media gallery, and enumerate all pages.
  */
 
-class webtoappMedia
+class WtadMedia
 {
     function __construct()
     {

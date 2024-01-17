@@ -1,12 +1,18 @@
 <?php
 /*
- Plugin Name: webtoapp.design
- Plugin URI:
- Description: webtoapp.design
- Author: webtoapp.design
- Text Domain: webtoapp
- License: Copyright 2023 webtoapp.design
- Version:              1.0.1     */ if ( ! defined( 'ABSPATH' ) ) exit;  require_once( dirname( __FILE__ ) . '/webtoapp_options.php' );  class WebToApp {
+ * Plugin Name:       webtoapp.design
+ * Plugin URI:        https://webtoapp.design/?utm_source=wordpress&utm_medium=plugin&utm_campaign=homepage
+ * Description:       Turn your website into an app and send push notifications to your users.
+ * Version:           1.0.1
+ * Requires at least: 5.8
+ * Requires PHP:      7.2
+ * License:           GPLv2
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ */
+if ( ! defined( 'ABSPATH' ) ) exit;
+require_once( dirname( __FILE__ ) . '/webtoapp_options.php' );
+
+class WtadMain {
     public $version = "1.0.1";
 
     private $options;
@@ -15,7 +21,7 @@
     {
         add_filter( 'wp_fatal_error_handler_enabled', '__return_false' );
         
-        $this->options = new WebToAppOptions($this);
+        $this->options = new WtadOptions($this);
         
         add_action('transition_post_status', array($this, 'transition_post_status'), 10, 3 );
     }
@@ -85,9 +91,9 @@
     {
         switch($response)
         {
-            case WebToApp::$RESPONSE_OK:                    return true;
-            case WebToApp::$RESPONSE_TRANSMISSION_FAILURE:  return false; 
-            case WebToApp::$RESPONSE_NO_KEY:                return false; 
+            case WtadMain::$RESPONSE_OK:                    return true;
+            case WtadMain::$RESPONSE_TRANSMISSION_FAILURE:  return false;
+            case WtadMain::$RESPONSE_NO_KEY:                return false;
             default:                                        return false;
         }
     }
@@ -96,9 +102,9 @@
     {
         switch($response)
         {
-            case WebToApp::$RESPONSE_OK:                    return "Success: Notification Sent";
-            case WebToApp::$RESPONSE_TRANSMISSION_FAILURE:  return "Server Error: Notification not sent";
-            case WebToApp::$RESPONSE_NO_KEY:                return "API Key Error";
+            case WtadMain::$RESPONSE_OK:                    return "Success: Notification Sent";
+            case WtadMain::$RESPONSE_TRANSMISSION_FAILURE:  return "Server Error: Notification not sent";
+            case WtadMain::$RESPONSE_NO_KEY:                return "API Key Error";
             default:                                        return "Unknown Error";
         }
     }
@@ -134,7 +140,7 @@
         {
             //$err = $response->get_error_message();    //only for debugging
             
-            return WebToApp::$RESPONSE_TRANSMISSION_FAILURE;
+            return WtadMain::$RESPONSE_TRANSMISSION_FAILURE;
         }
         
         else
@@ -142,20 +148,20 @@
             $code = wp_remote_retrieve_response_code($response);
             
             if( $code == 401 )
-                return WebToApp::$RESPONSE_NO_KEY;
+                return WtadMain::$RESPONSE_NO_KEY;
             
             else if( $code != 200 ) 
-                return WebToApp::$RESPONSE_INVALID_BODY;
+                return WtadMain::$RESPONSE_INVALID_BODY;
             
             $response_body = json_decode( wp_remote_retrieve_body($response), true);
             
-            return isset($response_body["success"]) && $response_body["success"] == true? WebToApp::$RESPONSE_OK 
-                                                                                        : WebToApp::$RESPONSE_UNEXPECTED;
+            return isset($response_body["success"]) && $response_body["success"] == true? WtadMain::$RESPONSE_OK
+                                                                                        : WtadMain::$RESPONSE_UNEXPECTED;
         }
     }
     
 } 
 
-$webtoapp = new WebToApp();
+$wtadMain = new WtadMain();
 
 ?>

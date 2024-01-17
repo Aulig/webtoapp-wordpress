@@ -8,9 +8,9 @@ require_once( dirname( __FILE__ ) . '/media.php' );
  * Handles only the webtoapp options page.
  */
 
-class WebToAppOptions
+class WtadOptions
 {
-    private $webToApp;
+    private $wtadMain;
     
     private $default_options = array();
 
@@ -22,11 +22,11 @@ class WebToAppOptions
     
     private $media;
     
-    function __construct($webToApp)
+    function __construct($wtadMain)
     {
-        $this->webToApp = $webToApp;
+        $this->wtadMain = $wtadMain;
         
-        $this->media = new webtoappMedia();
+        $this->media = new WtadMedia();
         
         $this->options_group = $this->options_name."_group";
         
@@ -63,11 +63,11 @@ class WebToAppOptions
         if($hook != $this->options_page_hook)
             return;
 
-        wp_enqueue_style( 'webtoapp_admin_fontawesome_css', plugins_url('back/webtoapp.design_static_library_fontawesome-5.15.2_css_fontawesome.min.css', __FILE__), array(), $this->webToApp->version);
-        wp_enqueue_style( 'webtoapp_admin_solid_css',       plugins_url('back/webtoapp.design_static_library_fontawesome-5.15.2_css_solid.min.css', __FILE__),       array(), $this->webToApp->version);
-        wp_enqueue_style( 'webtoapp_admin_general_css',     plugins_url('back/webtoapp.css', __FILE__),                                                              array(), $this->webToApp->version);
+        wp_enqueue_style( 'webtoapp_admin_fontawesome_css', plugins_url('back/webtoapp.design_static_library_fontawesome-5.15.2_css_fontawesome.min.css', __FILE__), array(), $this->wtadMain->version);
+        wp_enqueue_style( 'webtoapp_admin_solid_css',       plugins_url('back/webtoapp.design_static_library_fontawesome-5.15.2_css_solid.min.css', __FILE__),       array(), $this->wtadMain->version);
+        wp_enqueue_style( 'webtoapp_admin_general_css',     plugins_url('back/webtoapp.css', __FILE__),                                                              array(), $this->wtadMain->version);
             
-        wp_enqueue_script('webtoapp_admin_js',              plugins_url('back/webtoapp.js',  __FILE__), array(), $this->webToApp->version, true);
+        wp_enqueue_script('webtoapp_admin_js',              plugins_url('back/webtoapp.js',  __FILE__), array(), $this->wtadMain->version, true);
     }
     
     function callback_sanitize($options)
@@ -148,7 +148,7 @@ class WebToAppOptions
     
     function push()
     {
-        $dd = webtoappMedia::dropdownPages("dd_url", "Select a page", "url_to_open");
+        $dd = WtadMedia::dropdownPages("dd_url", "Select a page", "url_to_open");
         
         $out = "";
         $out .= "<div class='card mt-3'>";
@@ -292,15 +292,15 @@ class WebToAppOptions
         
         if( isset($_POST['send_notification']) )
         {
-            $r = $this->webToApp->pushNotification(
+            $r = $this->wtadMain->pushNotification(
                     sanitize_text_field( $options["key"]),
                     sanitize_text_field($_POST['title']),
                     sanitize_text_field($_POST['message']),
                     sanitize_url($_POST['url_to_open']),
                     sanitize_url($_POST['image_url']));
             
-            $responseOK   = $this->webToApp->getResponseOK($r);
-            $responseText = $this->webToApp->getResponseText($r); 
+            $responseOK   = $this->wtadMain->getResponseOK($r);
+            $responseText = $this->wtadMain->getResponseText($r);
         }
         
         if( isset($_POST['webapp-auto-on']) )
