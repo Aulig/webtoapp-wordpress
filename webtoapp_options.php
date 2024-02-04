@@ -63,8 +63,6 @@ class WtadOptions
         if($hook != $this->options_page_hook)
             return;
 
-        wp_enqueue_style( 'webtoapp_admin_fontawesome_css', plugins_url('back/webtoapp.design_static_library_fontawesome-5.15.2_css_fontawesome.min.css', __FILE__), array(), $this->wtadMain->version);
-        wp_enqueue_style( 'webtoapp_admin_solid_css',       plugins_url('back/webtoapp.design_static_library_fontawesome-5.15.2_css_solid.min.css', __FILE__),       array(), $this->wtadMain->version);
         wp_enqueue_style( 'webtoapp_admin_general_css',     plugins_url('back/webtoapp.css', __FILE__),                                                              array(), $this->wtadMain->version);
             
         wp_enqueue_script('webtoapp_admin_js',              plugins_url('back/webtoapp.js',  __FILE__), array(), $this->wtadMain->version, true);
@@ -160,11 +158,6 @@ class WtadOptions
         $out .= "<p>The title or main message of your push notification.</p>";
         $out .= "<div class='form-group'>";
         $out .= "<div class='input-group'>";
-        $out .= "<div class='input-group-prepend'>";
-        $out .= "<span class='input-group-text'>";
-        $out .= "<i class='fas fa-sticky-note' style='width: 1rem;' aria-hidden='true'></i>";
-        $out .= "</span>";
-        $out .= "</div>";
         $out .= "<input name='title' class='form-control' placeholder='Title' id='title' required='' type='text' >";
         $out .= "<label for='title' class='sr-only'>Title</label>";
         $out .= "<p class='text-danger' id='regex-error-title' hidden=''></p>";
@@ -173,11 +166,6 @@ class WtadOptions
         $out .= "<p>An optional, longer message that is shown below the title.</p>";
         $out .= "<div class='form-group'>";
         $out .= "<div class='input-group'>";
-        $out .= "<div class='input-group-prepend'>";
-        $out .= "<span class='input-group-text'>";
-        $out .= "<i class='fas fa-envelope' style='width: 1rem;' aria-hidden='true'></i>";
-        $out .= "</span>";
-        $out .= "</div>";
         $out .= "<input name='message' class='form-control' placeholder='Message (optional)' id='message' type='text' >";
         $out .= "<label for='message' class='sr-only'>Message (optional)</label>";
         $out .= "<p class='text-danger' id='regex-error-message' hidden=''></p>";
@@ -187,11 +175,6 @@ class WtadOptions
         $out .= "</p>";
         $out .= "<div class='form-group'>";
         $out .= "<div class='input-group'>";
-        $out .= "<div class='input-group-prepend'>";
-        $out .= "<span class='input-group-text'>";
-        $out .= "<i class='fas fa-link' style='width: 1rem;' aria-hidden='true'></i>";
-        $out .= "</span>";
-        $out .= "</div>";
         $out .= "<input name='url_to_open' class='form-control' placeholder='Link to Open on Notification Click (optional)' id='url_to_open' type='url' >";
         $out .= "<label for='url_to_open' class='sr-only'>Link to Open on Notification Click (optional)</label>";
 
@@ -211,11 +194,6 @@ class WtadOptions
         $out .= "</ul>";
         $out .= "<div class='form-group'>";
         $out .= "<div class='input-group'>";
-        $out .= "<div class='input-group-prepend'>";
-        $out .= "<span class='input-group-text'>";
-        $out .= "<i class='fas fa-image' style='width: 1rem;' aria-hidden='true'></i>";
-        $out .= "</span>";
-        $out .= "</div>";
         $out .= "<input name='image_url' class='form-control' placeholder='Image Link (optional)' id='image_url' type='url' >";
         $out .= "<label for='image_url' class='sr-only'>Image Link (optional)</label>";
         $out .= "<p class='text-danger' id='regex-error-image_url' hidden=''></p>";
