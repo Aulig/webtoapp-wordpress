@@ -130,6 +130,7 @@ class WtadOptions
         $out .= "</div>";
         $out .= "<div class='card-body'>";
         $out .= "<form action='' method='post' enctype='multipart/form-data'>";
+        $out .= wp_nonce_field('wtad', '_wpnonce', true, false);
         $out .= "<div class='btn-group btn-group-toggle' data-toggle='buttons' >";
         $out .= "<input style='color:white' class='" . esc_attr($turnOn) . "'  type='submit' name='webapp-auto-on'  autocomplete='off' value='On' />";
         $out .= "<input style='color:white' class='" . esc_attr($turnOff)."' type='submit' name='webapp-auto-off' autocomplete='off' value='Off'/>";
@@ -155,6 +156,7 @@ class WtadOptions
         $out .= "</div>";
         $out .= "<div class='card-body'>";
         $out .= "<form action='' method='post' enctype='multipart/form-data'>";
+        $out .= wp_nonce_field('wtad', '_wpnonce', true, false);
         $out .= "<p>The title or main message of your push notification.</p>";
         $out .= "<div class='form-group'>";
         $out .= "<div class='input-group'>";
@@ -254,6 +256,9 @@ class WtadOptions
         $responseText = null;
         $responseOK   = false;
         
+        if ( ! empty( $_POST ) )
+            check_admin_referer( 'wtad' );
+        
         if( isset($_POST['webtoapp-key-delete']) )
         {
             unset($options["key"]);
@@ -305,6 +310,8 @@ class WtadOptions
             
             <form id="webtoapp-set-key" method="post" enctype="multipart/form-data" action="" class="webtoapp-dashboard" >  
             	
+            	<?php wp_nonce_field('wtad') ?>
+            	
     			<h1>Enter your API key:</h1>
 
     			<div class="input-group">
@@ -328,10 +335,10 @@ class WtadOptions
            
            <?php $this->echoSafe($this->auto( isset($options["autopublish"]) && $options["autopublish"] == true,
                                    isset($options["last_auto_response"])? $options["last_auto_response"] : null ) ) ?>
-           
+
            <form id="webtoapp-set-key" method="post" enctype="multipart/form-data" action="" class="webtoapp-dashboard" >
+           	    <?php wp_nonce_field('wtad') ?>
     			<br/>
-    			
     			<p>
     			<input class="btn btn-danger url-submit-button" type="submit" value="Delete API Key" name="webtoapp-key-delete" />
     			<?php echo esc_html("&nbsp;(" . $options["key"] .")")  ?>
