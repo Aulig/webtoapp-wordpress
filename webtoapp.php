@@ -3,7 +3,7 @@
  * Plugin Name:       webtoapp.design
  * Plugin URI:        https://webtoapp.design/?utm_source=wordpress&utm_medium=plugin&utm_campaign=homepage
  * Description:       Turn your website into an app and send push notifications to your users.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires at least: 5.8
  * Requires PHP:      7.2
  * License:           GPLv2
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 require_once( dirname( __FILE__ ) . '/webtoapp_options.php' );
 
 class WtadMain {
-    public $version = "1.0.1";
+    public $version = "1.0.2";
 
     private $options;
 

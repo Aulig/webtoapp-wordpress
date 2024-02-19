@@ -3,6 +3,7 @@ This WordPress plugin allows you to access the push notification features of web
 
 Another neat feature is automatically sending a push notification when you publish a new post ([which was previously only possible through Zapier](https://webtoapp.design/blog/zapier-integration)).
 
+You can find the plugin in the [WordPress plugin directory](https://wordpress.org/plugins/webtoapp-design/).
 
 # What even is webtoapp.design?
 webtoapp.design allows you to convert your WordPress website into an app for Android and iOS. (Actually it works with any website, but I assume you are most interested in WordPress).
