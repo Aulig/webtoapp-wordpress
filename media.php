@@ -29,9 +29,9 @@ class WtadMedia
         $out .= "$('{$selectorButton}').click(function(e) {";
         $out .= "e.preventDefault();";
         $out .= "var custom_media_frame = wp.media.frames.custom_media_frame = wp.media({";
-        $out .= "title: 'Choose or Upload Media',";
+        $out .= "title: '" . esc_js(__('Choose or Upload Media', 'webtoapp-design')) . "',";
         $out .= "button: {";
-        $out .= "text: 'Use this media'";
+        $out .= "text: '" . esc_js(__('Use this media', 'webtoapp-design')) . "'";
         $out .= "},";
         $out .= "});";
         $out .= "custom_media_frame.on('select', function() {";
