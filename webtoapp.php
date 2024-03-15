@@ -8,6 +8,7 @@
  * Requires PHP:      7.2
  * License:           GPLv2
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       webtoapp-design
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 require_once( dirname( __FILE__ ) . '/webtoapp_options.php' );
@@ -24,6 +25,13 @@ class WtadMain {
         $this->options = new WtadOptions($this);
         
         add_action('transition_post_status', array($this, 'transition_post_status'), 10, 3 );
+
+        add_action( 'plugins_loaded', array( $this, 'load_my_plugin_textdomain' ) ); //!
+    }
+
+    function load_my_plugin_textdomain() //!
+    {
+        load_plugin_textdomain( 'webtoapp-design', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
     }
     
     private $postPublishId = 0;
@@ -102,10 +110,10 @@ class WtadMain {
     {
         switch($response)
         {
-            case WtadMain::$RESPONSE_OK:                    return "Success: Notification Sent";
-            case WtadMain::$RESPONSE_TRANSMISSION_FAILURE:  return "Server Error: Notification not sent";
-            case WtadMain::$RESPONSE_NO_KEY:                return "API Key Error";
-            default:                                        return "Unknown Error";
+            case WtadMain::$RESPONSE_OK:                    return __("Success: Notification Sent", "webtoapp-design"); 
+            case WtadMain::$RESPONSE_TRANSMISSION_FAILURE:  return __("Server Error: Notification not sent", "webtoapp-design");
+            case WtadMain::$RESPONSE_NO_KEY:                return __("API Key Error", "webtoapp-design"); 
+            default:                                        return __("Unknown Error", "webtoapp-design");
         }
     }
     
