@@ -4,7 +4,7 @@ Tags: Android App,iOS App,Application,App,Mobile App,Native App,Push Notificatio
 Requires at least: 5.8
 Tested up to: 6.3
 Requires PHP: 7.2
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2
 Plugin URI: https://webtoapp.design/?utm_source=wordpress&utm_medium=plugin&utm_campaign=homepage
 License URI: www.gnu.org/licenses/gpl-2.0.html
@@ -45,6 +45,9 @@ This plugin internally uses the webtoapp.design API and does not collect any oth
 [Plugin Source Code](https://github.com/Aulig/webtoapp-wordpress/tree/master)
 
 == Changelog ==
+
+= 1.0.3 =
+Make plugin translatable.
 
 = 1.0.2 =
 Add images and update readme.

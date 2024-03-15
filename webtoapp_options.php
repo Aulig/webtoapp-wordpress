@@ -157,7 +157,7 @@ class WtadOptions
         $out .= '<div class="card-body">';
         $out .= '<form action="" method="post" enctype="multipart/form-data">';
         $out .= wp_nonce_field('wtad', '_wpnonce', true, false);
-        $out .= '<p>' . esc_html__('The title or main message of your push notification', 'webtoapp-design') . '</p>';
+        $out .= '<p>' . esc_html__('The title or main message of your push notification.', 'webtoapp-design') . '</p>';
         $out .= '<div class="form-group">';
         $out .= '<div class="input-group">';
         $out .= '<input name="title" class="form-control" placeholder="' . esc_attr__('Title', 'webtoapp-design') . '" id="title" required="" type="text" >';
@@ -203,7 +203,6 @@ class WtadOptions
         $out .= '</div>';
         $out .= '</div>';
         $out .= '</div>';
-        $out .= '<input id="csrf_token" name="csrf_token" type="hidden" value="IjFjZDEyYmFkMmI0YjJmMzNmZWMwYWNkZGFiNTcwMTkyYjI1MzlkOWIi.ZP9wDw.KRs8sJse6_nAyrl0rAlrT0Smvf8">';
         $out .= '<button type="submit" class="btn btn-primary mt-2 btn-block" name="send_notification">'  . esc_html__('Send Notification', 'webtoapp-design') . '</button>';
         $out .= '</form>';
         $out .= '<p class="mt-3">'  . esc_html__('Having difficulties?', 'webtoapp-design') . ' <a href="https://webtoapp.design/blog/send-push-notification"> '  . esc_html__('Here\'s our guide to sending push notifications', 'webtoapp-design') . '</a> '  . esc_html__('including a section about', 'webtoapp-design') . ' <a href="https://webtoapp.design/blog/send-push-notification#not-receiving-notifications"> '  . esc_html__('why users might not be receiving notifications.', 'webtoapp-design') . '</a>';
