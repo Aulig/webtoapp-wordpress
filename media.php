@@ -47,37 +47,36 @@ class WtadMedia
     }
     
     public static function dropdownPages($idDropdown, $defaultText, $idCopyToInput = null)
-    {        
+    {
         $idDropdownAtt = esc_attr($idDropdown);
-        $idDropdownStr = esc_js($idDropdown);
-        $idCopyToInput = $idCopyToInput != null? esc_js($idCopyToInput) : null;
-        
-        $out = "<select id='{$idDropdownAtt}' class='btn dropdown-toggle' style='width:1em'>";
+        $label = esc_html($defaultText);
+        $out = "<label class='sr-only' for='{$idDropdownAtt}'>{$label}</label>";
+        $out .= "<select id='{$idDropdownAtt}' style='max-width:12em'>";
+        $out .= "<option value=''>{$label}</option>";
 
-        foreach ( get_pages( array('post_status' => 'publish') ) as $page )
-        {
-            $val = esc_attr( get_permalink($page) );
+        foreach (get_pages(array("post_status" => "publish")) as $page) {
+            $val = esc_url(get_permalink($page));
             $title = esc_html($page->post_title);
-            
             $out .= "<option value='{$val}'>{$title}</option>";
         }
-    
-        if( $idCopyToInput != null )
-        {
+        $out .= "</select>";
+
+        if ($idCopyToInput !== null) {
+            $idDropdownStr = esc_js($idDropdown);
+            $idCopyToInput = esc_js($idCopyToInput);
             $out .= "<script>";
             $out .= "jQuery(document).ready(function($){";
-            $out .= "$('#{$idDropdownStr}').change(function(e)";
-            $out .= "{";
-            $out .= "$('#{$idCopyToInput}').val( this.value );";
+            $out .= "$('#{$idDropdownStr}').on('change', function() {";
+            $out .= "if (this.value !== '') {";
+            $out .= "$('#{$idCopyToInput}').val(this.value);";
+            $out .= "this.selectedIndex = 0;";
+            $out .= "}";
             $out .= "});";
             $out .= "});";
             $out .= "</script>";
         }
-        
-        $out .= "</select>";
-        
+
         return $out;
-              
     }
 }
 

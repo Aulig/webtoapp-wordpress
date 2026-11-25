@@ -1,10 +1,10 @@
-=== webtoapp.design - Convert Your WordPress Website to an App and Send Push Notifications ===
+=== webtoapp.design ===
 Contributors: webtoappdesign
 Tags: Android App, iOS App,Website to App Converter,App Builder,Create App
 Requires at least: 5.8
-Tested up to: 6.6.1
+Tested up to: 7.2
 Requires PHP: 7.2
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2
 Plugin URI: https://webtoapp.design/?utm_source=wordpress&utm_medium=plugin&utm_campaign=homepage
 License URI: www.gnu.org/licenses/gpl-2.0.html
@@ -23,7 +23,7 @@ This plugin allows you to quickly send push notifications to your app users. [Pl
 - Instead of sending push notifications through tne webtoapp.design dashboard you can now send them directly from your WordPress admin panel. You probably spend quite a bit of time in your WordPress admin dashboard, so we hope this added convenience of being able to send notifications straight from there is useful to you.
 - You can directly select the page from your website that should be opened in the app when a user clicks on the notification. No more copy and pasting URLs from your website to the webtoapp.design dashboard.
 - You can select any image from your website using the WordPress image library to attach it to a push notification. So you no longer need to search for the link to the image you want to use, you can just click the image and it fills out the link automatically for you.
-- Automatically send a push notification each time you publish a new post. No more wasting time manually sending a notification every time you write a new article. This feature uses the post title as the notification title and attaches the post's featured image to the notification. The notification will be sent out as soon as you mark a page as public, so your drafts are unaffected.
+- Automatically send a push notification when you publish a public post or page without password protection. No more wasting time manually sending a notification every time you write a new article. This feature uses the post title as the notification title and attaches the post's featured image to the notification. The notification will be sent out as soon as you mark a page as public, so your drafts are unaffected.
 
 
 Features and benefits of turning your website into an app with webtoapp.design:
@@ -45,6 +45,12 @@ This plugin internally uses the webtoapp.design API and does not collect any oth
 [Plugin Source Code](https://github.com/Aulig/webtoapp-wordpress/tree/master)
 
 == Changelog ==
+
+= 1.0.5 =
+Limit automatic notifications to public, unprotected posts and pages. Fix sending without a featured image, validate manual notification fields, and hide the saved API key.
+
+= 1.0.4 =
+Upgrade to latest WP requirements.
 
 = 1.0.3 =
 Make plugin translatable.

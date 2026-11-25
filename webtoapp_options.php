@@ -10,6 +10,8 @@ require_once( dirname( __FILE__ ) . '/media.php' );
 
 class WtadOptions
 {
+    public const LAST_AUTO_RESPONSE = "webtoapp_last_auto_response";
+
     private $wtadMain;
     
     private $default_options = array();
@@ -17,8 +19,7 @@ class WtadOptions
     private $options_page_hook;
     
     private $options_name = "webtoapp";
-    
-    private $options_group;
+    private $page_slug = "webtoapp_options_page";
     
     private $media;
     
@@ -28,11 +29,7 @@ class WtadOptions
         
         $this->media = new WtadMedia();
         
-        $this->options_group = $this->options_name."_group";
-        
         add_action('admin_menu',            array($this, 'callback_admin_menu') );
-        
-        add_action('admin_init',            array($this, 'callback_admin_init') );
         
         add_action('admin_enqueue_scripts', array($this, 'callback_admin_enqueue_scripts') );
     }
@@ -43,19 +40,17 @@ class WtadOptions
         
         $menu_title = "webtoapp.design";          /* as it appears in menu */
         
-        $unique_menu_slug = "webtoapp_options_page";
-        
         $this->options_page_hook = add_options_page(
             $page_title,
             $menu_title,
-            'manage_options',
-            $unique_menu_slug,                    /*also forms slug of url for options page*/
-            array($this, 'options_page_echo') );
-    }
+            "manage_options",
+            $this->page_slug,                    /* also forms the slug for the settings URL */
+            array($this, "options_page_echo")
+        );
 
-    function callback_admin_init()
-    {
-        register_setting($this->options_group, $this->options_name, array($this, 'callback_sanitize') ); // group name, then name passed to get_option
+        if ($this->options_page_hook !== false) {
+            add_action("load-" . $this->options_page_hook, array($this, "handle_settings_post"));
+        }
     }
 
     function callback_admin_enqueue_scripts($hook)
@@ -68,19 +63,11 @@ class WtadOptions
         wp_enqueue_script('webtoapp_admin_js',              plugins_url('back/webtoapp.js',  __FILE__), array(), $this->wtadMain->version, true);
     }
     
-    function callback_sanitize($options)
-    {
-        return $options;
-    }
-    
     public function SetOptions($options)
     {
-        if( ! update_option($this->options_name, $options) )
-        {
-            $a = 42; //debugging
-        }
+        update_option($this->options_name, $options, false);
     }
-    
+
     public function GetOptions()
     {
         return wp_parse_args( get_option( $this->options_name, $this->default_options ), $this->default_options );
@@ -116,8 +103,8 @@ class WtadOptions
         $turnOn  = $on? "btn btn-primary active" : "btn btn-secondary";
         $turnOff = $on? "btn btn-secondary" : "btn btn-primary active";
         
-        $text = $on ? __('An automatic notification will be sent when a new page is made public. The notification will contain the post\'s title and, if available, it\'s featured image.', 'webtoapp-design')
-                    : __('No automatic notification will be sent when a new page is made public.', 'webtoapp-design');
+        $text = $on ? __("An automatic notification will be sent when you publish a public post or page without password protection. It will include the title and the featured image if available.", "webtoapp-design")
+                    : __("Automatic notifications for newly published posts and pages are off.", "webtoapp-design");
 
         $text = esc_html($text);
                     
@@ -126,7 +113,7 @@ class WtadOptions
         $out = '';
         $out .= '<div class="card mt-3">';
         $out .= '  <div class="card-header">';
-        $out .= '<h3 class="title">'  . esc_html__('New Page Publish Notification', 'webtoapp-design') . '</h3>';
+        $out .= '<h3 class="title">'  . esc_html__("Automatic Publish Notifications", "webtoapp-design") . '</h3>';
         $out .= '</div>';
         $out .= '<div class="card-body">';
         $out .= '<form action="" method="post" enctype="multipart/form-data">';
@@ -218,7 +205,8 @@ class WtadOptions
     {
         $permit = array( "class" => array(), "style" => array(), "id" => array(), "type" => array(), "value" => array(), "placeholder" => array(), 
                             "name" => array(), "aria-hidden" =>array(), "href" => array(), "target" => array(),
-                        "decoding" =>array(), "src" => array(), "width" =>array(), "height" =>array(), "alt" => array(), "action" =>array(), "method" =>array(), "enctype" =>array()
+                        "decoding" =>array(), "src" => array(), "width" =>array(), "height" =>array(), "alt" => array(), "action" =>array(), "method" =>array(), "enctype" =>array(),
+                        "for" => array(), "required" => array(), "hidden" => array(), "role" => array()
                             
             
         );
@@ -247,76 +235,103 @@ class WtadOptions
         ));
     }
     
+    function handle_settings_post()
+    {
+        if (empty($_POST)) {
+            return;
+        }
+
+        if (!current_user_can("manage_options")) {
+            wp_die(esc_html__("You do not have permission to manage these settings.", "webtoapp-design"), "", array("response" => 403));
+        }
+
+        check_admin_referer("wtad");
+
+        $options = $this->GetOptions();
+        $response = null;
+
+        if (isset($_POST["webtoapp-key-delete"])) {
+            unset($options["key"]);
+            $this->SetOptions($options);
+        } elseif (isset($_POST["webtoapp-key"])) {
+            $key = is_string($_POST["webtoapp-key"]) ? sanitize_text_field(wp_unslash($_POST["webtoapp-key"])) : "";
+            if (preg_match("/^[A-Za-z0-9_-]+$/D", $key) === 1) {
+                $options["key"] = $key;
+                $this->SetOptions($options);
+            } else {
+                $response = WtadMain::$RESPONSE_INVALID_KEY;
+            }
+        } elseif (isset($_POST["send_notification"])) {
+            $title = isset($_POST["title"]) && is_string($_POST["title"])
+                ? sanitize_text_field(wp_unslash($_POST["title"])) : "";
+            $message = !isset($_POST["message"]) || is_string($_POST["message"])
+                ? sanitize_text_field(wp_unslash($_POST["message"] ?? "")) : false;
+            $urls = array("url_to_open" => "", "image_url" => "");
+            foreach (array_keys($urls) as $field) {
+                if (isset($_POST[$field]) && $_POST[$field] !== "") {
+                    $urls[$field] = is_string($_POST[$field])
+                        ? filter_var(esc_url_raw(wp_unslash($_POST[$field]), array("http", "https", "ftp", "ftps")), FILTER_VALIDATE_URL)
+                        : false;
+                }
+            }
+
+            if (($options["key"] ?? "") === "") {
+                $response = WtadMain::$RESPONSE_NO_KEY;
+            } elseif ($title === "" || $message === false || in_array(false, $urls, true)) {
+                $response = WtadMain::$RESPONSE_INVALID_INPUT;
+            } else {
+                $response = $this->wtadMain->pushNotification(
+                    $options["key"], $title, $message, $urls["url_to_open"], $urls["image_url"]
+                );
+            }
+        } elseif (isset($_POST["webapp-auto-on"]) || isset($_POST["webapp-auto-off"])) {
+            $options["autopublish"] = isset($_POST["webapp-auto-on"]);
+            $this->SetOptions($options);
+        }
+
+        // Refresh the resulting GET page without submitting the notification again.
+        $location = add_query_arg("page", $this->page_slug, admin_url("options-general.php"));
+        if ($response !== null) {
+            $location = add_query_arg(array(
+                "wtad_result" => $response,
+                "wtad_notice" => wp_create_nonce("wtad-notice-" . $response),
+            ), $location);
+        }
+
+        wp_safe_redirect($location, 303);
+        exit;
+    }
+
     function options_page_echo()
     {
         $options = $this->GetOptions();
-        
         $responseText = null;
-        $responseOK   = false;
-        
-        if ( ! empty( $_POST ) )
-            check_admin_referer( 'wtad' );
-        
-        if( isset($_POST['webtoapp-key-delete']) )
-        {
-            unset($options["key"]);
-            
-            update_option($this->options_name, $options);
+        $responseOK = false;
+        if (isset($_GET["wtad_result"], $_GET["wtad_notice"])
+                && is_string($_GET["wtad_result"]) && is_string($_GET["wtad_notice"])) {
+            $result = filter_var(wp_unslash($_GET["wtad_result"]), FILTER_VALIDATE_INT);
+            if ($result !== false && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET["wtad_notice"])), "wtad-notice-" . $result)) {
+                $responseText = $this->wtadMain->getResponseText($result);
+                $responseOK = $this->wtadMain->getResponseOK($result);
+            }
         }
-        
-        if( isset($_POST['webtoapp-key']) )
-        {
-            $options["key"] = sanitize_text_field($_POST['webtoapp-key']);
-            
-            update_option($this->options_name, $options);
-        }
-        
-        if( isset($_POST['send_notification']) )
-        {
-            $r = $this->wtadMain->pushNotification(
-                    sanitize_text_field( $options["key"]),
-                    sanitize_text_field($_POST['title']),
-                    sanitize_text_field($_POST['message']),
-                    sanitize_url($_POST['url_to_open']),
-                    sanitize_url($_POST['image_url']));
-            
-            $responseOK   = $this->wtadMain->getResponseOK($r);
-            $responseText = $this->wtadMain->getResponseText($r);
-        }
-        
-        if( isset($_POST['webapp-auto-on']) )
-        {
-            $options["autopublish"] = true;
-            
-            update_option($this->options_name, $options);
-        }
-        
-        if( isset($_POST['webapp-auto-off']) )
-        {
-            $options["autopublish"] = false;
-            
-            update_option($this->options_name, $options);
-        }
-        
+
         ?>
         <div class="wrap webtoapp ">  
             <div id="icon-themes" class="icon32"></div>  
             
             <?php  $this->echoSafe( $this->header($responseText, $responseOK) )?> 
             
-            <?php  if( ! isset($options["key"]) ) { ?>
+            <?php if (($options["key"] ?? "") === "") { ?>
             
             <form id="webtoapp-set-key" method="post" enctype="multipart/form-data" action="" class="webtoapp-dashboard" >  
             	
             	<?php wp_nonce_field('wtad') ?>
 
-                <!-- <?php esc_html_e('', 'webtoapp-design'); ?> -->
-                <!-- value="<?php echo esc_attr__('', 'webtoapp-design'); ?>" -->
-            	
                 <h1><?php esc_html_e('Enter your API key:', 'webtoapp-design'); ?></h1>
 
     			<div class="input-group">
-                    <input name="webtoapp-key" class="form-control" placeholder="12345-abcdefghijklmnopqrstuvwxyz-0123456789" id="webtoapp-key" type="text" minlength="43" maxlength="43">
+                    <input name="webtoapp-key" class="form-control" placeholder="12345-abcdefghijklmnopqrstuvwxyz-0123456789" id="webtoapp-key" type="password" autocomplete="off" required>
                     <label for="webtoapp-key" class="sr-only"><?php esc_html_e('Your API key', 'webtoapp-design'); ?></label>
                     <div class="input-group-append">
                         <button class="btn btn-primary" type="submit" ><?php esc_html_e('Save', 'webtoapp-design'); ?></button>
@@ -335,15 +350,15 @@ class WtadOptions
     		
            <?php $this->echoSafe($this->push()) ?>
            
-           <?php $this->echoSafe($this->auto( isset($options["autopublish"]) && $options["autopublish"] == true,
-                                   isset($options["last_auto_response"])? $options["last_auto_response"] : null ) ) ?>
+           <?php $this->echoSafe($this->auto( ($options["autopublish"] ?? false) === true,
+                                   get_option(self::LAST_AUTO_RESPONSE, null) ) ) ?>
 
            <form id="webtoapp-set-key" method="post" enctype="multipart/form-data" action="" class="webtoapp-dashboard" >
            	    <?php wp_nonce_field('wtad') ?>
     			<br/>
     			<p>
-    			<input class="btn btn-danger url-submit-button" type="submit" value="<?php echo esc_attr_e('Delete API Key', 'webtoapp-design'); ?>" name="webtoapp-key-delete" />
-    			<?php echo esc_html("&nbsp;(" . $options["key"] .")")  ?>
+                <input class="btn btn-danger url-submit-button" type="submit" value="<?php esc_attr_e("Delete API Key", "webtoapp-design"); ?>" name="webtoapp-key-delete" />
+                <?php esc_html_e("API key saved.", "webtoapp-design"); ?>
     			</p>
            </form>
               
@@ -354,4 +369,3 @@ class WtadOptions
     }
     
 }
-?>
